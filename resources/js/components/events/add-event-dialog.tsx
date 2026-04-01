@@ -15,6 +15,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
+import { Plus } from 'lucide-react';
 
 export function AddEventDialog() {
     const [open, setOpen] = useState(false);
@@ -41,7 +42,10 @@ export function AddEventDialog() {
     return (
         <Dialog open={open} onOpenChange={handleOpenChange}>
             <DialogTrigger asChild>
-                <Button>New event</Button>
+                <Button>
+                    <Plus />
+                    Add event
+                </Button>
             </DialogTrigger>
 
             <DialogContent className="sm:max-w-[640px]">

@@ -11,8 +11,11 @@ import {
     ArrowUpDown,
     ChevronDown,
     ChevronUp,
+    Eye,
     MoreHorizontal,
+    Pencil,
     Search,
+    Trash2,
 } from 'lucide-react';
 import { useMemo, useRef, useState } from 'react';
 import EventController from '@/actions/App/Http/Controllers/EventController';
@@ -223,7 +226,10 @@ export function EventsTable({
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem asChild>
                                 <a href={EventController.show.url(row.original.id)}>
-                                    View
+                                    <span className="flex items-center gap-2">
+                                        <Eye className="h-4 w-4" />
+                                        View
+                                    </span>
                                 </a>
                             </DropdownMenuItem>
                             <DropdownMenuItem
@@ -232,7 +238,10 @@ export function EventsTable({
                                     setEditOpen(true);
                                 }}
                             >
-                                Edit
+                                <span className="flex items-center gap-2">
+                                    <Pencil className="h-4 w-4" />
+                                    Edit
+                                </span>
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem
@@ -242,7 +251,10 @@ export function EventsTable({
                                     setDeleteOpen(true);
                                 }}
                             >
-                                Delete
+                                <span className="flex items-center gap-2">
+                                    <Trash2 className="h-4 w-4" />
+                                    Delete
+                                </span>
                             </DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
