@@ -24,7 +24,7 @@ class StoreEventRequest extends FormRequest
     {
         return [
             'title' => ['required', 'string', 'max:255'],
-            'description' => ['nullable', 'string'],
+            'description' => ['required', 'string'],
             'starts_at' => ['required', 'date', 'after:now'],
         ];
     }

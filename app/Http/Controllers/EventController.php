@@ -7,6 +7,7 @@ use App\Http\Requests\UpdateEventRequest;
 use App\Models\Event;
 use App\Services\EventReminderScheduler;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -20,23 +21,55 @@ class EventController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(): Response
+    public function index(Request $request): Response
     {
-        $events = Event::query()
-            ->whereBelongsTo(request()->user())
-            ->select(['id', 'user_id', 'title', 'starts_at', 'reminder_sent_at', 'created_at'])
-            ->ordered()
-            ->paginate(10)
-            ->withQueryString();
+        $page = max(1, (int) $request->input('page', 1));
+        $rowsParam = $request->input('rows', '10');
+        $rows = max(1, min(100, (int) $rowsParam));
+        $sortField = (string) $request->input('sortField', '');
+        $sortOrder = (int) $request->input('sortOrder', 1);
+        $search = trim((string) $request->input('search', ''));
+
+        $query = Event::query()
+            ->whereBelongsTo($request->user())
+            ->select(['id', 'user_id', 'title', 'description', 'starts_at', 'reminder_sent_at', 'created_at']);
+
+        if ($search !== '') {
+            $like = '%'.str_replace(['%', '_'], ['\\%', '\\_'], $search).'%';
+
+            $query->where(function ($q) use ($like) {
+                $q->where('title', 'like', $like)
+                    ->orWhere('description', 'like', $like);
+            });
+        }
+
+        $allowedSorts = ['title', 'starts_at', 'created_at'];
+        if ($sortField !== '' && in_array($sortField, $allowedSorts, true)) {
+            $query->orderBy($sortField, $sortOrder === -1 ? 'desc' : 'asc');
+        } else {
+            $query->orderBy('starts_at');
+        }
+
+        $paginator = $query->paginate($rows, ['*'], 'page', $page)->withQueryString();
+        $events = collect($paginator->items());
 
         return Inertia::render('events/index', [
-            'events' => $events->through(fn (Event $event): array => [
+            'events' => $events->map(fn (Event $event): array => [
                 'id' => $event->id,
                 'title' => $event->title,
+                'description' => $event->description,
                 'starts_at' => $event->starts_at->toIso8601String(),
                 'reminder_sent_at' => $event->reminder_sent_at?->toIso8601String(),
                 'status' => $event->isPassed() ? 'Passed' : 'Upcoming',
             ]),
+            'pagination' => [
+                'total' => $paginator->total(),
+                'page' => $paginator->currentPage(),
+                'rows' => $paginator->perPage(),
+                'sortField' => $sortField !== '' ? $sortField : null,
+                'sortOrder' => $sortField !== '' ? $sortOrder : null,
+                'search' => $search,
+            ],
         ]);
     }
 
@@ -60,7 +93,7 @@ class EventController extends Controller
 
         $scheduler->schedule($event);
 
-        return to_route('events.show', $event);
+        return to_route('events.show', $event)->with('success', 'Event created successfully.');
     }
 
     /**
@@ -105,7 +138,7 @@ class EventController extends Controller
 
         $scheduler->schedule($event);
 
-        return to_route('events.show', $event);
+        return to_route('events.show', $event)->with('success', 'Event updated successfully.');
     }
 
     /**
@@ -115,6 +148,6 @@ class EventController extends Controller
     {
         $event->delete();
 
-        return to_route('events.index');
+        return to_route('events.index')->with('success', 'Event deleted successfully.');
     }
 }
