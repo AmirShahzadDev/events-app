@@ -99,11 +99,10 @@ export function AddEventDialog() {
                     </div>
 
                     <div className="grid gap-2">
-                        <Label htmlFor="description">Description *</Label>
+                        <Label htmlFor="description">Description (optional)</Label>
                         <Textarea
                             id="description"
                             name="description"
-                            required
                             placeholder="Optional details…"
                             value={form.data.description}
                             onChange={(e) =>

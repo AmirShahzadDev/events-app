@@ -38,11 +38,15 @@ class EventReminderNotification extends Notification implements ShouldQueue
     {
         $eventUrl = route('events.show', $this->eventId);
 
+        $startsAtDisplay = $this->startsAt
+            ->timezone(config('app.timezone'))
+            ->format('M j, Y \a\t g:i A');
+
         return (new MailMessage)
             ->subject('Event reminder: '.$this->title)
             ->line('Your event is starting now.')
             ->line('Title: '.$this->title)
-            ->line('Starts at: '.$this->startsAt->toDateTimeString())
+            ->line('Starts at: '.$startsAtDisplay)
             ->action('View event', $eventUrl);
     }
 

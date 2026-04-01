@@ -12,6 +12,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { Badge } from '@/components/ui/badge';
+import { formatEventDateTime } from '@/lib/format-event-datetime';
 
 export type EventRow = {
     id: number;
@@ -19,17 +20,6 @@ export type EventRow = {
     starts_at: string;
     status: 'Upcoming' | 'Passed';
 };
-
-function formatDateTime(iso: string): string {
-    const d = new Date(iso);
-    return new Intl.DateTimeFormat(undefined, {
-        year: 'numeric',
-        month: 'short',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-    }).format(d);
-}
 
 export const columns: ColumnDef<EventRow>[] = [
     {
@@ -49,7 +39,7 @@ export const columns: ColumnDef<EventRow>[] = [
         header: 'Date & time',
         cell: ({ row }) => (
             <span className="whitespace-nowrap">
-                {formatDateTime(row.original.starts_at)}
+                {formatEventDateTime(row.original.starts_at)}
             </span>
         ),
     },

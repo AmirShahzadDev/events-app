@@ -19,17 +19,7 @@ import {
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { CalendarClock, Pencil, Trash2 } from 'lucide-react';
-
-function formatDateTime(iso: string): string {
-    const d = new Date(iso);
-    return new Intl.DateTimeFormat(undefined, {
-        year: 'numeric',
-        month: 'long',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-    }).format(d);
-}
+import { formatEventDateTime } from '@/lib/format-event-datetime';
 
 export default function EventsShow({
     event,
@@ -66,7 +56,9 @@ export default function EventsShow({
                         <div className="text-muted-foreground flex items-center gap-2 text-sm">
                             <CalendarClock className="h-4 w-4" />
                             <span className="whitespace-nowrap">
-                                {formatDateTime(event.starts_at)}
+                                {formatEventDateTime(event.starts_at, {
+                                    month: 'long',
+                                })}
                             </span>
                             <Separator orientation="vertical" className="h-4" />
                             <Badge variant={isUpcoming ? 'default' : 'secondary'}>
@@ -167,7 +159,9 @@ export default function EventsShow({
                                         When
                                     </div>
                                     <div className="mt-1 whitespace-nowrap">
-                                        {formatDateTime(event.starts_at)}
+                                        {formatEventDateTime(event.starts_at, {
+                                    month: 'long',
+                                })}
                                     </div>
                                 </div>
                             </CardContent>

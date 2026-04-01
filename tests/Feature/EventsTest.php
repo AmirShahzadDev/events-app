@@ -68,3 +68,39 @@ test('event start time must be in the future', function () {
 
     $this->assertDatabaseMissing('events', ['title' => 'Past event']);
 });
+
+test('description is optional when creating an event', function () {
+    Queue::fake();
+
+    $user = User::factory()->create();
+    $this->actingAs($user);
+
+    $startsAt = now()->addHour();
+
+    $this->post(route('events.store'), [
+        'title' => 'No description',
+        'starts_at' => $startsAt->toDateTimeString(),
+    ])->assertRedirect();
+
+    $event = Event::query()->whereBelongsTo($user)->where('title', 'No description')->firstOrFail();
+
+    expect($event->description)->toBeNull();
+});
+
+test('users can update title on a passed event without changing start time', function () {
+    $user = User::factory()->create();
+    $event = Event::factory()->for($user)->create([
+        'starts_at' => now()->subDay(),
+    ]);
+
+    $this->actingAs($user);
+
+    $this->put(route('events.update', $event), [
+        'title' => 'Updated title',
+        'description' => 'Added later',
+        'starts_at' => $event->starts_at->toDateTimeString(),
+    ])->assertRedirect();
+
+    expect($event->fresh()->title)->toBe('Updated title');
+    expect($event->fresh()->description)->toBe('Added later');
+});

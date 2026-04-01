@@ -49,6 +49,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
+import { formatEventDateTime } from '@/lib/format-event-datetime';
 
 export type EventRow = {
     id: number;
@@ -192,7 +193,7 @@ export function EventsTable({
                 ),
                 cell: ({ row }) => (
                     <span className="whitespace-nowrap">
-                        {formatDateTime(row.original.starts_at)}
+                        {formatEventDateTime(row.original.starts_at)}
                     </span>
                 ),
             },

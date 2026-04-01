@@ -47,7 +47,7 @@ class EventService
     }
 
     /**
-     * @param  array{title:string,description:string,starts_at:mixed}  $data
+     * @param  array{title:string,description?:string|null,starts_at:mixed}  $data
      */
     public function create(User $user, array $data): Event
     {
@@ -58,7 +58,7 @@ class EventService
     }
 
     /**
-     * @param  array{title:string,description:string,starts_at:mixed}  $data
+     * @param  array{title:string,description?:string|null,starts_at:mixed}  $data
      */
     public function update(Event $event, array $data): Event
     {

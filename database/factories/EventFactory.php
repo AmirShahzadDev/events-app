@@ -21,7 +21,7 @@ class EventFactory extends Factory
         return [
             'user_id' => User::factory(),
             'title' => fake()->sentence(4),
-            'description' => fake()->optional()->paragraph(),
+            'description' => fake()->optional(0.35)->paragraph(),
             'starts_at' => fake()->dateTimeBetween('+10 minutes', '+10 days'),
             'reminder_sent_at' => null,
         ];
