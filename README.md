@@ -2,6 +2,8 @@
 
 Event reminder application (Laravel Developer Assignment).
 
+**Database:** This project uses **PostgreSQL** in development/production. Set `DB_CONNECTION=pgsql` and the `DB_*` variables in `.env` (see `.env.example`). SQLite in `.env.example` is only a default fallback for quick local runs.
+
 ## Setup
 
 ```bash
